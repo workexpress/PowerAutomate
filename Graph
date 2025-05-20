@@ -1,0 +1,40 @@
+//Microsoft Graph API Code - interacts with Microsoft Power Automate flow Action: "Send a Microsoft Graph HTTP Request"
+//Gets User ID and validates if user is an executive then returns True or False.
+
+const exemptValues = ["001", "002", "003", "004", "005";
+
+ 
+
+async function checkManagerExemption(managerId, accessToken) {
+
+    const response = await fetch(`https://graph.microsoft.com/v1.0/users/@{outputs('Get_user_profile')?['body/id']}`, {
+
+        headers: {
+
+            Authorization: `Bearer ${accessToken}`
+
+        }
+
+    });
+
+ 
+
+    if (!response.ok) {
+
+        throw new Error(`Failed to fetch manager data: ${response.statusText}`);
+
+    }
+
+ 
+
+    const manager = await response.json();
+
+    const isExempt = exemptValues.includes(manager.extensionAttribute8);
+
+ 
+
+    const ManagerIDout = !isExempt;
+
+    return ManagerIDout;
+
+}
